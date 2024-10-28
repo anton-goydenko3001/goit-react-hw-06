@@ -1,0 +1,12 @@
+.mainContainer {
+  margin-bottom: 30px;
+}
+
+.inputContainer {
+  width: 360px;
+  background-color: #ffffff;
+  color: #242424;
+  border: 2px solid black;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
