@@ -1,8 +1,10 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { useId } from "react";
+// import { useId } from "react";
 import { nanoid } from "nanoid";
 import style from "./ContactForm.module.css";
+import { useDispatch } from "react-redux";
+import { addContact } from "../../redux/contactsSlice";
 
 const phoneRegex = /^[0-9]{3}[-]{1}[0-9]{2}[-]{1}[0-9]{2}$/;
 
@@ -11,42 +13,44 @@ const validationSchema = Yup.object().shape({
     .min(3, "Too Short!")
     .max(50, "Too Long!")
     .required("Required"),
-  phone: Yup.string()
+  number: Yup.string()
     .min(3, "Too Short!")
     .max(50, "Too Long!")
     .matches(phoneRegex, "Number format: 000-00-00")
     .required("Required"),
 });
 
-export default function ContactForm({ onAdd }) {
-  const nameId = useId();
-  const phoneId = useId();
-
-  const initialValues = {
-    name: "",
-    phone: "",
-  };
+export default function ContactForm() {
+  const dispatch = useDispatch();
 
   const handleSubmit = (values, actions) => {
-    onAdd({
-      id: nanoid(),
-      name: values.name,
-      number: values.phone,
-    });
+    dispatch(
+      addContact({
+        id: nanoid(),
+        name: values.name,
+        number: values.number,
+      })
+    );
     actions.resetForm();
   };
 
   return (
     <>
       <Formik
-        initialValues={initialValues}
+        initialValues={{ name: "", number: "", id: "" }}
         onSubmit={handleSubmit}
         validationSchema={validationSchema}
       >
         <Form className={style.formContainer}>
           <div className={style.inputContainer}>
-            <label htmlFor={nameId}>Name</label>
-            <Field className={style.inputValue} type="text" name="name" />
+            <label htmlFor="name">Name</label>
+            <Field
+              className={style.inputValue}
+              id="name"
+              type="text"
+              name="name"
+              placeholder="contact name"
+            />
             <ErrorMessage
               className={style.errorMessage}
               name="name"
@@ -54,11 +58,17 @@ export default function ContactForm({ onAdd }) {
             />
           </div>
           <div className={style.inputContainer}>
-            <label htmlFor={phoneId}>Number</label>
-            <Field className={style.inputValue} type="tel" name="phone" />
+            <label htmlFor="number">Number</label>
+            <Field
+              className={style.inputValue}
+              id="number"
+              type="tel"
+              name="number"
+              placeholder="contact phone number"
+            />
             <ErrorMessage
               className={style.errorMessage}
-              name="phone"
+              name="number"
               component="span"
             />
           </div>
